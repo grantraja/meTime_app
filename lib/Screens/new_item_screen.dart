@@ -6,6 +6,7 @@ class NewItemScreen extends StatefulWidget {
   List<bool> weekdays = [true, false, false, false, false, false, false];
   TimeOfDay start = TimeOfDay(hour: 0, minute: 0);
   TimeOfDay end = TimeOfDay(hour: 0, minute: 1);
+  DateTime pickedDate = DateTime.now();
   @override
   _NewItemScreenState createState() => _NewItemScreenState();
 }
@@ -16,7 +17,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
   }
 
   final _blockFormKey = GlobalKey<FormState>();
-  // final _blockFormKey = GlobalKey<FormState>();
+  final _appFormKey = GlobalKey<FormState>();
   // final _blockFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -82,7 +83,9 @@ class _NewItemScreenState extends State<NewItemScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
                         //Block Name
                         Text(
                           "Block Name:",
@@ -110,10 +113,13 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             Spacer(flex: 1),
                             RaisedButton(
                               onPressed: () async {
-                                widget.start = await showTimePicker(
+                                TimeOfDay buffer = await showTimePicker(
                                   context: context,
                                   initialTime: TimeOfDay.now(),
                                 );
+                                if (buffer != null) {
+                                  widget.start = buffer;
+                                }
                                 update();
                               },
                               child: Text(widget.start.format(context)),
@@ -123,10 +129,13 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             Spacer(flex: 1),
                             RaisedButton(
                               onPressed: () async {
-                                widget.end = await showTimePicker(
+                                TimeOfDay buffer = await showTimePicker(
                                   context: context,
                                   initialTime: TimeOfDay.now(),
                                 );
+                                if (buffer != null) {
+                                  widget.end = buffer;
+                                }
                                 update();
                               },
                               child: Text(widget.end.format(context)),
@@ -240,7 +249,103 @@ class _NewItemScreenState extends State<NewItemScreen> {
                 : widget.tabSelection == 1
                     ?
                     //appointments
-                    Container()
+                    Form(
+                        key: _appFormKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Appointment Name:",
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                hintText: 'Enter Name',
+                              ),
+                              maxLength: 20,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
+                            ),
+                            Row(
+                              children: [
+                                Spacer(flex: 8),
+                                Text("Start:"),
+                                Spacer(flex: 1),
+                                RaisedButton(
+                                  onPressed: () async {
+                                    TimeOfDay buffer = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+                                    if (buffer != null) {
+                                      widget.start = buffer;
+                                    }
+                                    update();
+                                  },
+                                  child: Text(widget.start.format(context)),
+                                ),
+                                Spacer(flex: 6),
+                                Text("End:"),
+                                Spacer(flex: 1),
+                                RaisedButton(
+                                  onPressed: () async {
+                                    TimeOfDay buffer = await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+                                    if (buffer != null) {
+                                      widget.end = buffer;
+                                    }
+                                    update();
+                                  },
+                                  child: Text(widget.end.format(context)),
+                                ),
+                                Spacer(flex: 8),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Date:"),
+                                RaisedButton(
+                                  onPressed: () async {
+                                    DateTime buffer = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      lastDate:
+                                          DateTime(DateTime.now().year + 5),
+                                      firstDate: DateTime.now(),
+                                    );
+                                    if (buffer != null) {
+                                      widget.pickedDate = buffer;
+                                    }
+                                    update();
+                                  },
+                                  child: Text(
+                                      "${widget.pickedDate.month}.${widget.pickedDate.day}.${widget.pickedDate.year}"),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: double.infinity,
+                              child: RaisedButton(
+                                elevation: 5,
+                                onPressed: () {},
+                                child: Text("Done"),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     :
                     //tasks
                     Container(),
