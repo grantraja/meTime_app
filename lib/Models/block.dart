@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../tools/timeOfDay_tools.dart';
 
 class Block {
   String name;
@@ -11,4 +12,10 @@ class Block {
     @required this.end,
     @required this.days,
   });
+  bool isOvernight() {
+    if (toDouble(end) < toDouble(start)) {
+      return true;
+    }
+    return false;
+  }
 }

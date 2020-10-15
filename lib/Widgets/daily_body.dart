@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../Providers/blocks_provider.dart';
+import '../Models/block.dart';
+import '../tools/timeOfDay_tools.dart';
 
 class DailyBody extends StatelessWidget {
   static double schduleheight = 1000;
@@ -14,6 +18,7 @@ class DailyBody extends StatelessWidget {
               //Static Background with times and dividers
               BackgroundDividers(),
               //Mutable Scheduling layer
+              ScheduleItems(),
               //Statefull time marker
               TimeMarker(),
             ],
@@ -167,3 +172,60 @@ class _TimeMarkerState extends State<TimeMarker> {
   }
 }
 
+class ScheduleItems extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ScheduleBlocks(),
+      ],
+    );
+  }
+}
+
+class ScheduleBlocks extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<int> todaysBlocks =
+        Provider.of<Blocks>(context).todaysBlocks(DateTime.now().weekday - 1);
+    List<Column> blocksStack = [];
+    todaysBlocks.forEach((id) {
+      Block temp = Provider.of<Blocks>(context).findById(id);
+      if (temp.isOvernight()) {
+        //if the block goes past midnight
+      } else {
+        blocksStack.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            //initial spacer
+            SizedBox(
+              height: 5,
+            ),
+            //time before the block begins
+            SizedBox(
+              height: (temp.start.hour * DailyBody.schduleheight / 24) +
+                  (temp.start.minute * DailyBody.schduleheight / 1440),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  color: Colors.green,
+                  child: Center(child: Text(temp.name)),
+                  width: 300,
+                  height: (toDouble(temp.end) - toDouble(temp.start)) *
+                      DailyBody.schduleheight /
+                      1440,
+                ),
+                SizedBox(width: 5,)
+              ],
+            ),
+          ],
+        ));
+      }
+    });
+    return Stack(
+      children: blocksStack,
+    );
+  }
+}
