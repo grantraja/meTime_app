@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../Providers/blocks_provider.dart';
+import '../Models/block.dart';
 
+//I'm lazy lol:
+// ignore: must_be_immutable
 class NewItemScreen extends StatefulWidget {
   static const routeName = '/new_item';
   int tabSelection = 0;
+  String title;
   List<bool> weekdays = [true, false, false, false, false, false, false];
   TimeOfDay start = TimeOfDay(hour: 0, minute: 0);
   TimeOfDay end = TimeOfDay(hour: 0, minute: 1);
@@ -18,10 +24,12 @@ class _NewItemScreenState extends State<NewItemScreen> {
 
   final _blockFormKey = GlobalKey<FormState>();
   final _appFormKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   // final _blockFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("meTime"),
       ),
@@ -103,6 +111,9 @@ class _NewItemScreenState extends State<NewItemScreen> {
                               return 'Please enter some text';
                             }
                             return null;
+                          },
+                          onSaved: (value) {
+                            widget.title = value;
                           },
                         ),
                         //Beginning and Ending times
@@ -235,11 +246,45 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             SizedBox(width: 20),
                           ],
                         ),
+                        //Done Button
                         Container(
                           width: double.infinity,
                           child: RaisedButton(
                             elevation: 5,
-                            onPressed: () {},
+                            onPressed: () {
+                              print("Submit");
+                              //Validates the Title
+                              if (!_blockFormKey.currentState.validate()) {
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    content: Text('Name field empty')));
+                                //Scaffold.of(context).showSnackBar(SnackBar(
+                                    //content: Text('Name field empty')));
+                                return;
+                              }
+                              print("Title Validated");
+                              //Saves the Title
+                              _blockFormKey.currentState.save();
+                              //Creates temporary Block out of data
+                              Block newBlock = Block(
+                                title: widget.title,
+                                start: widget.start,
+                                end: widget.end,
+                                days: widget.weekdays,
+                              );
+                              print("New Block generated");
+                              //checks times are available
+                              if (!Provider.of<Blocks>(context, listen: false)
+                                  .validateNewTimes(newBlock)) {
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    content: Text('Time Unavailable')));
+                                return;
+                              }
+                              print("Times validated");
+                              //adds new block
+                              Provider.of<Blocks>(context, listen: false)
+                                  .addBlock(newBlock);
+                              print("Block Added");
+                            },
                             child: Text("Done"),
                           ),
                         ),

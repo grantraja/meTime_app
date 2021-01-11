@@ -29,6 +29,7 @@ class DailyBody extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class BackgroundDividers extends StatelessWidget {
   List<HourlyDivider> dividers = [];
   @override
@@ -211,7 +212,7 @@ class ScheduleBlocks extends StatelessWidget {
               children: [
                 Container(
                   color: Colors.green,
-                  child: Center(child: Text(temp.name)),
+                  child: Center(child: Text(temp.title)),
                   width: 300,
                   height: (toDouble(temp.end) - toDouble(temp.start)) *
                       DailyBody.schduleheight /

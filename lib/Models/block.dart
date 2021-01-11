@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../tools/timeOfDay_tools.dart';
 
 class Block {
-  String name;
+  int id;
+  String title;
   TimeOfDay start;
   TimeOfDay end;
   List<bool> days;
   Block({
-    @required this.name,
+    this.id,
+    @required this.title,
     @required this.start,
     @required this.end,
     @required this.days,

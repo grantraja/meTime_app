@@ -8,7 +8,7 @@ class DailyScheduleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("meTime"),
+        title: Text("myTime"),
       ),
       body: DailyBody(),
       floatingActionButton: FloatingActionButton(
