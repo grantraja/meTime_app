@@ -1,85 +1,72 @@
-import 'package:sqflite/sqflite.dart' as sql;
-import 'package:path/path.dart' as path;
-import 'package:sqflite/sqlite_api.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:package_info/package_info.dart';
+import 'dart:async';
+
 
 class DBHelper {
-  //In order to modularize database access, parameters are stored here for quick access
-  //This is the name of the database being made
-  static String dbName = "myTime.db";
-  //here are the titles of each of the tables being made
-  static List<String> tableNames = [
-    "blocks_Table",
-    "groups_Table",
-    "tasks_Table",
-    "appointments_Table",
-  ];
-  //this is the format of each table being made, this is called upon to initialize the database
-  static List<String> tableCreate = [
-    "CREATE TABLE ${tableNames[0]}(id INT PRIMARY KEY, title TEXT, strtH INT, strtM INT, endH INT, endM INT, d1 INT, d2 INT, d3 INT, d4 INT, d5 INT, d6 INT, d7 INT, group INT)",
-    "CREATE TABLE ${tableNames[1]}(id INT PRIMARY KEY, title TEXT)",
-    "CREATE TABLE ${tableNames[2]}(id INT PRIMARY KEY, title TEXT, goalD INT, goalM INT, group INT)",
-    "CREATE TABLE ${tableNames[3]}(id INT PRIMARY KEY, title TEXT, strtH INT, strtM INT, endH INT, endM INT, dateD INT, dateM INT)",
-  ];
-  //This returns a future that resolves into a handle for the database. If this is the first use, this initializes the database
-  static Future<Database> database() async {
-    print("database access");
-    final dbPath = await sql.getDatabasesPath();
-    return sql.openDatabase(
-      path.join(dbPath, DBHelper.dbName),
-      onCreate: (db, version) {
-        print("database Initialize");
-        // return db.execute("CREATE TABLE blocks_Table(id INT PRIMARY KEY, title TEXT, strtH INT, strtM INT, endH INT, endM INT, d1 INT, d2 INT, d3 INT, d4 INT, d5 INT, d6 INT, d7 INT, group INT)");
-        DBHelper.tableCreate.forEach((element) {
-          return db.execute(element);
-        });
-      },
-      version: 1,
-    );
+  final List<String> tableInitComs;
+  static Database _database;
+  DBHelper(this.tableInitComs);
+
+  Future<Database> initDB() async {
+    //Create DB name and Find DB Path
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final String dbName = packageInfo.appName + ".db";
+    final String dbPath = await getDatabasesPath();
+    print("Database Name: $dbName");
+    print("Database Path: $dbPath");
+    //Open/Create Database
+    Database database =
+        await openDatabase(dbPath, version: 1, onCreate: createDB);
+    print("DATABASE INITIALIZED");
+    return database;
   }
 
-  //initialize
-  static Future<void> initialize() async {
-    print("initialize");
-    final db = await DBHelper.database();
-    //
-    print("delete");
-    DBHelper.tableNames.forEach((element) {
-      try {
-      db.delete(element);
-      } catch (e) {
-      }
+  //Create DataBase
+  void createDB(Database db, int newVersion) async {
+    this.tableInitComs.forEach((element) async {
+      await db.execute(element);
+      print("Table Created");
     });
-    //
-    print("add");
-    DBHelper.tableCreate.forEach((element) {
-      db.execute(element);
-    });
+    print("DATABASE Created");
   }
 
-  //This adds new data to the database table of choice.
-  static Future<void> insert(String table, Map<String, Object> data) async {
-    print("insert to table $table");
-    final db = await DBHelper.database();
-    db.insert(
-      table,
-      data,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  //Access DataBase
+  Future<Database> get database async {
+    if (_database == null) {
+      _database = await initDB();
+    }
+    return _database;
   }
 
-  //This fetches the data from an entire Table
-  static Future<List<Map<String, dynamic>>> getData(String table) async {
-    final db = await DBHelper.database();
-    return db.query(table);
+  //Fetch Table Values from DataBase
+  Future<List<Map<String, dynamic>>> fetchTableValues(String tableName) async {
+    Database db = await this.database;
+    List<Map<String, dynamic>> tableValues = await db.query(tableName);
+    return tableValues;
   }
 
-  //This updates the information stored in a row of a table, functionally the same as insert, (I believe)
-  static Future<void> update(String table, Map<String, Object> data) async {
-    final db = await DBHelper.database();
-    db.update(
-      table,
-      data,
-      conflictAlgorithm: sql.ConflictAlgorithm.replace,
-    );
+  //Insert Map
+  Future<int> insertMap({Map<String, dynamic> newMap, String tableName}) async {
+    Database db = await this.database;
+    int result = await db.insert(tableName, newMap);
+    return result;
+  }
+
+  //Delete Note
+  Future<int> deleteNote(
+      {Map<String, dynamic> newMap, int id, String tableName}) async {
+    Database db = await this.database;
+    int result = await db.rawDelete('DELETE FROM $tableName WHERE id = $id');
+    return result;
+  }
+
+  // Get number of Note objects in database
+  Future<int> getCount({String tableName}) async {
+    Database db = await this.database;
+    List<Map<String, dynamic>> x =
+        await db.rawQuery('SELECT COUNT (*) from $tableName');
+    int result = Sqflite.firstIntValue(x);
+    return result;
   }
 }

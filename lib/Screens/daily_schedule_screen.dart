@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meTime_app/Screens/new_item_screen.dart';
+import './new_item_screen.dart';
 import '../Widgets/daily_body.dart';
 
 class DailyScheduleScreen extends StatelessWidget {

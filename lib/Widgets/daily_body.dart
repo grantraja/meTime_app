@@ -188,10 +188,10 @@ class ScheduleBlocks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<int> todaysBlocks =
-        Provider.of<Blocks>(context).todaysBlocks(DateTime.now().weekday - 1);
+        Provider.of<BlocksProvider>(context).todaysBlocks(DateTime.now().weekday - 1);
     List<Column> blocksStack = [];
     todaysBlocks.forEach((id) {
-      Block temp = Provider.of<Blocks>(context).findById(id);
+      Block temp = Provider.of<BlocksProvider>(context).findById(id);
       if (temp.isOvernight()) {
         //if the block goes past midnight
       } else {

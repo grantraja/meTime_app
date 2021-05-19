@@ -44,7 +44,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                   width: 5,
                 ),
                 Expanded(
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       widget.tabSelection = 0;
                       update();
@@ -56,7 +56,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                   width: 5,
                 ),
                 Expanded(
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       widget.tabSelection = 1;
                       update();
@@ -68,7 +68,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                   width: 5,
                 ),
                 Expanded(
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       widget.tabSelection = 2;
                       update();
@@ -122,7 +122,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             Spacer(flex: 8),
                             Text("Start:"),
                             Spacer(flex: 1),
-                            RaisedButton(
+                            ElevatedButton(
                               onPressed: () async {
                                 TimeOfDay buffer = await showTimePicker(
                                   context: context,
@@ -138,7 +138,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             Spacer(flex: 6),
                             Text("End:"),
                             Spacer(flex: 1),
-                            RaisedButton(
+                            ElevatedButton(
                               onPressed: () async {
                                 TimeOfDay buffer = await showTimePicker(
                                   context: context,
@@ -249,13 +249,13 @@ class _NewItemScreenState extends State<NewItemScreen> {
                         //Done Button
                         Container(
                           width: double.infinity,
-                          child: RaisedButton(
-                            elevation: 5,
+                          child: ElevatedButton(
+                            //elevation: 5,
                             onPressed: () {
                               print("Submit");
                               //Validates the Title
                               if (!_blockFormKey.currentState.validate()) {
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     content: Text('Name field empty')));
                                 //Scaffold.of(context).showSnackBar(SnackBar(
                                     //content: Text('Name field empty')));
@@ -273,15 +273,15 @@ class _NewItemScreenState extends State<NewItemScreen> {
                               );
                               print("New Block generated");
                               //checks times are available
-                              if (!Provider.of<Blocks>(context, listen: false)
+                              if (!Provider.of<BlocksProvider>(context, listen: false)
                                   .validateNewTimes(newBlock)) {
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     content: Text('Time Unavailable')));
                                 return;
                               }
                               print("Times validated");
                               //adds new block
-                              Provider.of<Blocks>(context, listen: false)
+                              Provider.of<BlocksProvider>(context, listen: false)
                                   .addBlock(newBlock);
                               print("Block Added");
                             },
@@ -325,7 +325,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                                 Spacer(flex: 8),
                                 Text("Start:"),
                                 Spacer(flex: 1),
-                                RaisedButton(
+                                ElevatedButton(
                                   onPressed: () async {
                                     TimeOfDay buffer = await showTimePicker(
                                       context: context,
@@ -341,7 +341,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                                 Spacer(flex: 6),
                                 Text("End:"),
                                 Spacer(flex: 1),
-                                RaisedButton(
+                                ElevatedButton(
                                   onPressed: () async {
                                     TimeOfDay buffer = await showTimePicker(
                                       context: context,
@@ -361,7 +361,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text("Date:"),
-                                RaisedButton(
+                                ElevatedButton(
                                   onPressed: () async {
                                     DateTime buffer = await showDatePicker(
                                       context: context,
@@ -382,8 +382,8 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             ),
                             Container(
                               width: double.infinity,
-                              child: RaisedButton(
-                                elevation: 5,
+                              child: ElevatedButton(
+                                //elevation: 5,
                                 onPressed: () {},
                                 child: Text("Done"),
                               ),

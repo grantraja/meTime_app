@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:meTime_app/helpers/db_helper.dart';
 import 'Screens/daily_schedule_screen.dart';
 import 'Screens/new_item_screen.dart';
 import 'package:provider/provider.dart';
-import 'Providers/blocks_provider.dart';
+
+import './Providers/blocks_provider.dart';
+import './Providers/db_provider.dart';
+
+
+import './helpers/db_helper.dart';
+import './Models/block.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    DBHelper.initialize();
+    print("Application Build");
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => Blocks(),
+          create: (ctx) => BlocksProvider(),
+        ),
+        Provider(
+          create: (ctx) => DBProvider(),
         ),
       ],
       child: MaterialApp(
