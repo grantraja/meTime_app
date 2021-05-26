@@ -282,7 +282,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                               print("Times validated");
                               //adds new block
                               Provider.of<BlocksProvider>(context, listen: false)
-                                  .addBlock(newBlock);
+                                  .addBlock(context, newBlock);
                               print("Block Added");
                             },
                             child: Text("Done"),

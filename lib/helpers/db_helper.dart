@@ -2,37 +2,57 @@ import 'package:sqflite/sqflite.dart';
 import 'package:package_info/package_info.dart';
 import 'dart:async';
 
-
 class DBHelper {
-  final List<String> tableInitComs;
+  static DBHelper _dBHelper;
   static Database _database;
-  DBHelper(this.tableInitComs);
+
+  List<String> tableInitComs;
+
+  DBHelper._createInstance();
+
+  factory DBHelper() {
+    print("DBHelper Constructor: Init Called");
+    if (_dBHelper == null) {
+      _dBHelper = DBHelper._createInstance();
+      print("First Run");
+    } else {
+      print("Not First Run");
+    }
+    return _dBHelper;
+  }
+
+  void passTableInitComs(List<String> coms) {
+    print("DBHelper passTIC: recieves coms");
+    this.tableInitComs = coms;
+  }
 
   Future<Database> initDB() async {
     //Create DB name and Find DB Path
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String dbName = packageInfo.appName + ".db";
-    final String dbPath = await getDatabasesPath();
+    final String dbPath = await getDatabasesPath() + dbName;
     print("Database Name: $dbName");
     print("Database Path: $dbPath");
     //Open/Create Database
-    Database database =
-        await openDatabase(dbPath, version: 1, onCreate: createDB);
-    print("DATABASE INITIALIZED");
+    var database = await openDatabase(dbPath, version: 2, onCreate: createDB);
+
+    print("DBHelper initDB: Finished");
     return database;
   }
 
   //Create DataBase
   void createDB(Database db, int newVersion) async {
+    print("DBHelper CreaeteDB: onCreate Called");
     this.tableInitComs.forEach((element) async {
       await db.execute(element);
-      print("Table Created");
+      print("DBHelper CreaeteDB: Table Created");
     });
-    print("DATABASE Created");
+    print("DBHelper CreaeteDB: DATABASE Created");
   }
 
   //Access DataBase
   Future<Database> get database async {
+    print("database access");
     if (_database == null) {
       _database = await initDB();
     }

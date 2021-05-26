@@ -3,12 +3,14 @@ import '../Models/block.dart';
 
 class DBProvider {
   DBHelper dbHelper;
-
-  DBProvider() {
+  void innitializeDBHelper() {
+    print("DBProvider: Init Begins");
     final List<String> dbTableInitComs = [
       Block.dbTableForm,
     ];
-    dbHelper = DBHelper(dbTableInitComs);
-    dbHelper.initDB();
+    dbHelper = DBHelper();
+    dbHelper.passTableInitComs(dbTableInitComs);
+    //dbHelper.tableInitComs = dbTableInitComs;
+    //await dbHelper.initDB();
   }
 }

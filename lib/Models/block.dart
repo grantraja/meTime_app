@@ -4,7 +4,7 @@ import '../tools/timeOfDay_tools.dart';
 class Block {
   //information for Local Database management
   static String dbTableName = 'block_table';
-  static String dbTableForm = 'CREATE TABLE $dbTableName(id INT PRIMARY KEY AUTOINCREMENT, title TEXT, strtH INT, strtM INT, endH INT, endM INT, d1 INT, d2 INT, d3 INT, d4 INT, d5 INT, d6 INT, d7 INT, group INT)';
+  static String dbTableForm = 'CREATE TABLE $dbTableName (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, strtH INTEGER, strtM INTEGER, endH INTEGER, endM INTEGER, d1 INTEGER, d2 INTEGER, d3 INTEGER, d4 INTEGER, d5 INTEGER, d6 INTEGER, d7 INTEGER)';
   //Primary Data
   int id;
   String title;
