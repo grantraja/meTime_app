@@ -73,15 +73,15 @@ class DBHelper {
     return result;
   }
 
-  //Delete Note
-  Future<int> deleteNote(
+  //Delete Map
+  Future<int> deleteMap(
       {Map<String, dynamic> newMap, int id, String tableName}) async {
     Database db = await this.database;
     int result = await db.rawDelete('DELETE FROM $tableName WHERE id = $id');
     return result;
   }
 
-  // Get number of Note objects in database
+  // Get number of Map objects in database
   Future<int> getCount({String tableName}) async {
     Database db = await this.database;
     List<Map<String, dynamic>> x =

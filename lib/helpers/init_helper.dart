@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Providers/db_provider.dart';
+// import '../Providers/db_provider.dart';
 import '../Providers/blocks_provider.dart';
 
 //After the architecture of the App has been create this runs to initialize the values
@@ -16,8 +16,9 @@ class _InitHelperState extends State<InitHelper> {
   int loadingState = 0;
   void loadingDelay() async {
     print("LoadingDelay: Begins");
-    Provider.of<DBProvider>(context, listen: false).innitializeDBHelper();
-    print("LoadingDelay: DBProvider.initialize finished");
+    // Provider.of<DBProvider>(context, listen: false).innitializeDBHelper();
+    // print("LoadingDelay: DBProvider.initialize finished");
+    print("InitHelper: Loading Delay: Call load data");
     await Provider.of<BlocksProvider>(context, listen: false).loadData(context);
     print("LoadingDelay: BlocksProvider.loadData finished");
     await Future.delayed(const Duration(seconds: 5));

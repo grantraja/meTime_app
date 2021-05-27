@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../tools/timeOfDay_tools.dart';
 import '../Models/block.dart';
@@ -7,6 +8,7 @@ import './db_provider.dart';
 import '../helpers/db_helper.dart';
 
 class BlocksProvider with ChangeNotifier {
+  Database blocksDatabase;
   List<Block> _blocks = [
     Block(
       id: 0,
@@ -17,16 +19,35 @@ class BlocksProvider with ChangeNotifier {
     )
   ];
 
-
   Future<void> loadData(BuildContext context) async {
-    DBHelper dbHelper =
-        Provider.of<DBProvider>(context, listen: false).dbHelper;
-    List<Map<String, dynamic>> data =
-        await dbHelper.fetchTableValues(Block.dbTableName);
-    data.forEach((dataMap) {
+    print("Blocks Provider: Load Data Called");
+    //new db code
+    final String dbName = "BlocksProvider.db";
+    final String dbPath = await getDatabasesPath() + dbName;
+    print("Blocks Provider: Database Name: $dbName");
+    print("Blocks Provider: Database Path: $dbPath");
+    blocksDatabase = await openDatabase(dbPath, version: 2, onCreate: createDB);
+    print("Blocks Provider: Fetching Values");
+    List<Map<String, dynamic>> tableValues =
+        await blocksDatabase.query(Block.dbTableName);
+    print("Blocks Provider: Data tables num: " + tableValues.length.toString());
+    tableValues.forEach((dataMap) {
       _blocks.add(Block.fromMap(dataMap));
     });
+    // DBHelper dbHelper =
+    //     Provider.of<DBProvider>(context, listen: false).dbHelper;
+    // List<Map<String, dynamic>> data =
+    //     await dbHelper.fetchTableValues(Block.dbTableName);
+    // data.forEach((dataMap) {
+    //   _blocks.add(Block.fromMap(dataMap));
+    // });
     notifyListeners();
+  }
+
+  void createDB(Database db, int newVersion) async {
+    print("Blocks Provider: CreaeteDB: onCreate Called");
+    print(Block.dbTableForm);
+    db.execute(Block.dbTableForm);
   }
 
   bool validateNewTimes(Block newBlock) {
@@ -60,14 +81,17 @@ class BlocksProvider with ChangeNotifier {
     _blocks.add(newBlock);
     //Updating UI
     notifyListeners();
-    print("Block added to provider, listeners notified");
+    print(
+        "Blocks Provider: Add Block: Block added to provider, listeners notified");
     //Pushing to database Storage
-    DBHelper dbHelper =
-        Provider.of<DBProvider>(context, listen: false).dbHelper;
-    dbHelper.insertMap(
-      newMap: newBlock.toMap(),
-      tableName: Block.dbTableName,
-    );
+    //new DB code:
+    blocksDatabase.insert(Block.dbTableName, newBlock.toMap());
+    // DBHelper dbHelper =
+    //     Provider.of<DBProvider>(context, listen: false).dbHelper;
+    // dbHelper.insertMap(
+    //   newMap: newBlock.toMap(),
+    //   tableName: Block.dbTableName,
+    // );
     return true;
   }
 

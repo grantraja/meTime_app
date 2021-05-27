@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import './helpers/init_helper.dart';
 import './Providers/blocks_provider.dart';
-import './Providers/db_provider.dart';
+// import './Providers/db_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
     print("Application Build");
     return MultiProvider(
       providers: [
-        Provider(
-          create: (ctx) => DBProvider(),
-        ),
+        // Provider(
+        //   create: (ctx) => DBProvider(),
+        // ),
         ChangeNotifierProvider(
           create: (ctx) => BlocksProvider(),
         ),
